@@ -4,7 +4,7 @@ terraform {
     resource_group_name  = "databricks_2"
     storage_account_name = "stvl"
     container_name       = "cont-vl"
-    key                  = "MlsOrJ1YOy1wviIFZ/t0ESxxbYO3PmgTcbyIX+oIlJQeI6hAOhPlXPyeg4uwImeCNxZOfJXSbz7rKB/J03DYJA=="
+    key                  = "***"
 
   }
 }
