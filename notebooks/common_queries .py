@@ -35,7 +35,7 @@ spark.conf.set(
     "CrJFosuX/xvxRRXYJQiCM8WlDsc/+Cy0Whe0DWN7uuPoKCTx+WeEL9XyX72WfwQB51v+D/qJ6STqA9d5ej7UZw=="
 )
 df = spark.table("default.second")
-df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.net/weather23")
+df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.net/weather")
 
 # COMMAND ----------
 
@@ -63,4 +63,40 @@ spark.conf.set(
     "CrJFosuX/xvxRRXYJQiCM8WlDsc/+Cy0Whe0DWN7uuPoKCTx+WeEL9XyX72WfwQB51v+D/qJ6STqA9d5ej7UZw=="
 )
 df = spark.table("default.first")
-df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.net/top_ten_hotels_with_max_tempr_diff_by_month23")
+df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.net/top_ten_hotels_with_max_tempr_diff_by_month")
+
+# COMMAND ----------
+
+from pyspark.sql import functions as F
+
+
+expedia_delta = spark.read.table("expedia_delta")
+
+expedia_tmp = (
+    expedia_delta
+    .selectExpr("id","hotel_id","month(srch_ci) AS month_range")
+)
+
+expedia_tmp = (expedia_tmp
+    .select("id", "hotel_id", "month_range").distinct())
+
+expedia_tmp = (
+    expedia_tmp
+        .groupBy("hotel_id", "month_range").agg(F.count("*").alias('visits')).orderBy(F.col('visits').desc()).limit(10)
+)
+
+hotel_weather_df = spark.read.table("hotel_weather_delta")
+
+top_ten_busy_hotels_df = (
+    expedia_tmp
+    .join(
+        hotel_weather_df.select("id", "name").distinct(),
+        on=[
+            expedia_tmp.hotel_id == hotel_weather_df.id],
+        how="inner").orderBy(F.col('visits').desc()).drop("id"))
+
+spark.conf.set(
+    "fs.azure.account.key.stvmisiukevich.dfs.core.windows.net",
+    "CrJFosuX/xvxRRXYJQiCM8WlDsc/+Cy0Whe0DWN7uuPoKCTx+WeEL9XyX72WfwQB51v+D/qJ6STqA9d5ej7UZw=="
+)
+top_ten_busy_hotels_df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.net/top_ten_busy_hotels")

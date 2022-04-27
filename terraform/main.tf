@@ -96,7 +96,7 @@ variable "databricks_workspace_url" {
 }
 
 resource "databricks_notebook" "bdcc" {
-  source     = "C:/Users/Uladzislau_Misiukevi/PycharmProjects/m07_sparksql_python_azure/notebooks/common_sql.py"
+  source     = "C:/Users/Uladzislau_Misiukevi/PycharmProjects/m07_sparksql_python_azure/notebooks/common_queries .py"
   path       = "/sql/common"
 }
 
