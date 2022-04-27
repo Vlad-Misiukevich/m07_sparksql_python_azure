@@ -30,8 +30,7 @@ git clone https://github.com/Vlad-Misiukevich/m07_sparksql_python_azure.git
 ![img_6.png](images/img_6.png)  
 4. Deploy Databricks Notebook on cluster 
 ![img_7.png](images/img_7.png)
-![img_8.png](images/img_8.png)
-![img_11.png](images/img_11.png)
+![img_13.png](images/img13.png)
 5. Store data in storage container.  
 ![img_9.png](images/img_9.png)
 ![img_10.png](images/img_10.png)
