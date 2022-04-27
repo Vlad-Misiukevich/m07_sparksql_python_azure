@@ -91,29 +91,36 @@ provider "databricks" {
 }
 
 variable "databricks_workspace_url" {
-  description = "The URL to the Azure Databricks workspace (must start with https://)"
   type = string
   default = "https://adb-5271193890078146.6.azuredatabricks.net/?o=5271193890078146#folder/275127807006030"
 }
 
 resource "databricks_notebook" "bdcc" {
-  source     = "C:/Users/Uladzislau_Misiukevi/PycharmProjects/m07_sparksql_python_azure/notebooks/weather_trends.py"
-  path       = "/sql/weather_tr"
+  source     = "C:/Users/Uladzislau_Misiukevi/PycharmProjects/m07_sparksql_python_azure/notebooks/common_sql.py"
+  path       = "/sql/common"
 }
 
-data "databricks_node_type" "smallest" {
-  local_disk = true
-}
+resource "databricks_cluster" "single_node" {
+  cluster_name            = "Single Node"
+  spark_version           = var.spark_version
+  node_type_id            = var.node_type_id
+  autotermination_minutes = 20
 
-data "databricks_spark_version" "latest" {}
+  spark_conf = {
+    # Single-node
+    "spark.databricks.cluster.profile" : "singleNode"
+    "spark.master" : "local[*]"
+  }
+
+  custom_tags = {
+    "ResourceClass" = "SingleNode"
+  }
+}
 
 resource "databricks_job" "bdcc" {
   name = "${var.ENV}-job"
-  new_cluster {
-    num_workers   = 1
-    spark_version = data.databricks_spark_version.latest.id
-    node_type_id  = data.databricks_node_type.smallest.id
-  }
+  existing_cluster_id = databricks_cluster.single_node.id
+
   notebook_task {
     notebook_path = databricks_notebook.bdcc.path
   }
@@ -123,7 +130,6 @@ output "notebook_url" {
   value = databricks_notebook.bdcc.url
 }
 
-// Print the URL to the job.
 output "job_url" {
   value = databricks_job.bdcc.url
 }

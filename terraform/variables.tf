@@ -10,6 +10,14 @@ variable "LOCATION" {
   default = "westeurope"
 }
 
+variable "spark_version" {
+  default = "7.3.x-scala2.12"
+}
+
+variable "node_type_id" {
+  default = "Standard_L4s"
+}
+
 variable "BDCC_REGION" {
   type = string
   description = "The BDCC Region for billing."
