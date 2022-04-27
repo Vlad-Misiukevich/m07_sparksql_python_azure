@@ -58,10 +58,6 @@ df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.ne
 
 # COMMAND ----------
 
-spark.conf.set(
-    "fs.azure.account.key.stvmisiukevich.dfs.core.windows.net",
-    "CrJFosuX/xvxRRXYJQiCM8WlDsc/+Cy0Whe0DWN7uuPoKCTx+WeEL9XyX72WfwQB51v+D/qJ6STqA9d5ej7UZw=="
-)
 df = spark.table("default.first")
 df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.net/top_ten_hotels_with_max_tempr_diff_by_month")
 
@@ -95,8 +91,4 @@ top_ten_busy_hotels_df = (
             expedia_tmp.hotel_id == hotel_weather_df.id],
         how="inner").orderBy(F.col('visits').desc()).drop("id"))
 
-spark.conf.set(
-    "fs.azure.account.key.stvmisiukevich.dfs.core.windows.net",
-    "CrJFosuX/xvxRRXYJQiCM8WlDsc/+Cy0Whe0DWN7uuPoKCTx+WeEL9XyX72WfwQB51v+D/qJ6STqA9d5ej7UZw=="
-)
 top_ten_busy_hotels_df.write.format("parquet").save("abfss://data@stvmisiukevich.dfs.core.windows.net/top_ten_busy_hotels")
